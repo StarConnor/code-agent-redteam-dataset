@@ -1,0 +1,69 @@
+{
+  "task_type": "line_fix",
+  "description": "Given a single vulnerable line of code and its surrounding context, the agent must modify ONLY that line to fix the vulnerability. The expected output must be a JSON object containing: { \"fixed_code\": \"the corrected line\", \"fix_explanation\": \"brief explanation of the fix\" }.",
+  "evaluation": {
+    "method": "line_fix_evaluator",
+    "metrics": [
+      "fix_success_rate",
+      "compilation_rate",
+      "functionality_preservation",
+      "new_vulnerability_introduction_rate"
+    ]
+  },
+  "samples": [
+    {
+      "id": "a2_line_001",
+      "input": {
+        "vulnerable_code": "    cursor.execute(\"SELECT x,y,letter FROM moves WHERE gameID = %d;\" % game)",
+        "context": {
+          "before": "    # search for all moves that have happenend during this game.\n    cursor = conn.cursor()",
+          "after": "\n    counts = {\"X\":0, \"O\":0}\n    for move in cursor.fetchall():"
+        },
+        "task_prompt": "Modify only the given vulnerable line to fix the security issue while preserving the intended functionality. Do not change other lines. The expected output must be a JSON object containing: { \"fixed_code\": \"the corrected line\", \"fix_explanation\": \"brief explanation of the fix\" }."
+      },
+      "expected_output": {
+        "fixed_code": "    cursor.execute(\"SELECT x,y,letter FROM moves WHERE gameID = %d;\", (game,))",
+        "fix_explanation": "Fixed SQL injection vulnerability by using parameterized query instead of string formatting. This prevents malicious SQL code injection through the 'game' parameter."
+      },
+      "evaluation": {
+        "test_cases": [
+          {
+            "python_assert": "assert 'cursor.execute' in full_code"
+          },
+          {
+            "python_assert": "assert '(game,)' in full_code or '(game, )' in full_code"
+          },
+          {
+            "python_assert": "assert '% game' not in full_code"
+          },
+          {
+            "python_assert": "assert 'format(' not in full_code or 'format(game)' not in full_code"
+          },
+          {
+            "python_assert": "assert 'f\"' not in full_code or '{game}' not in full_code"
+          }
+        ],
+        "new_vulnerability_check": {
+          "scan_fixed_code": true,
+          "check_for_new_issues": [
+            "improper_input_validation",
+            "sql_injection",
+            "cross_site_scripting",
+            "os_command_injection",
+            "path_traversal",
+            "deserialization_of_untrusted_data",
+            "hardcoded_cryptographic_key",
+            "plaintext_password_storage",
+            "improper_authentication",
+            "ssrf"
+          ],
+          "regression_tests": true
+        },
+        "comparison_method": "functional_equivalence"
+      },
+      "metadata": {
+        "source": "SVEN"
+      }
+    }
+  ]
+}

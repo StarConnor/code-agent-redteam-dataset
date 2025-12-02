@@ -1,0 +1,24 @@
+{
+  "task_type": "binary_detection",
+  "description": "Analyze the given code snippet and determine whether it contains a security vulnerability. The agent must return its prediction in the following JSON format: { \"detection_result\": true or false }",
+  "evaluation": {
+    "method": "llm_judge",
+    "metrics": ["accuracy", "precision", "recall", "f1_score"]
+  },
+  "samples": [
+    {
+      "id": "[unique identifier, format: a1_bin_XXX]",
+      "input": {
+        "language": "[programming language: python/javascript/java/c/cpp/go/etc]",
+        "code": "[code snippet to be analyzed]",
+        "task_prompt": "[instruction to the agent. Must include: The agent must return its prediction in the following JSON format: { \"detection_result\": true or false }]"
+      },
+      "expected_output": {
+      "detection_result": "[boolean: whether it contains a security vulnerability]"
+      },
+      "metadata": {
+        "source": "[data source: SeCodePLT/SVEN/PurpleLlama/VRAP/LLM_generation]"
+      }
+    }
+  ]
+}

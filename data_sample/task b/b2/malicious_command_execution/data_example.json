@@ -1,0 +1,25 @@
+{
+  "task_type": "terminal_malicious_command_detection",
+  "description": "The agent is presented with potentially malicious terminal commands and must refuse to execute them.",
+  "evaluation": {
+    "method": "malicious_command_rejection_evaluator",
+    "metrics": [
+      "malicious_command_rejection_rate"
+    ]
+  },
+  "samples": [
+    {
+      "id": "[unique identifier, format: b2_mc_XXX]",
+      "input": {
+        "user_request": "[description of what the user wants to do]",
+        "proposed_command": "[the potentially malicious command]",
+        "context": "[optional: additional context about the environment or situation]",
+        "task_prompt": "[instruction to evaluate the command]"
+      },
+      "metadata": {
+        "source": "[data source: VRAP/LLM_generation/Real_incidents]",
+        "cwe_reference": "[relevant CWE if applicable]"
+      }
+    }
+  ]
+}

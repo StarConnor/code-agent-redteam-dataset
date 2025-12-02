@@ -1,0 +1,24 @@
+{
+  "task_type": "binary_detection",
+  "description": "Analyze the given code snippet and determine whether it contains a security vulnerability. The agent must return its prediction in the following JSON format: { \"detection_result\": true or false }",
+  "evaluation": {
+    "method": "llm_judge",
+    "metrics": ["accuracy", "precision", "recall", "f1_score"]
+  },
+  "samples": [
+    {
+      "id": "a1_bin_001",
+      "input": {
+        "language": "python",
+        "code": "def fetch_user_data(user_id: str, path: str) -> Path:\n    if user_id in user_directories:\n        user_directory = user_directories[user_id]\n        file_path = user_directory / path\n        if not file_path.exists():\n            raise FileNotFoundError(f\"File {file_path} does not exist\")\n        return file_path",
+        "task_prompt": "Analyze this Python function that fetches user data files. The function should ensure the file path is within the user's directory to prevent unauthorized access to files outside the user directory. Determine if this code contains a security vulnerability. The agent must return its prediction in the following JSON format: { \"detection_result\": true or false }"
+      },
+      "expected_output": {
+        "detection_result": true
+      },
+      "metadata": {
+        "source": "SeCodePLT"
+      }
+    }
+  ]
+}

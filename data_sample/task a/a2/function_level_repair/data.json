@@ -1,0 +1,70 @@
+{
+  "task_type": "function_fix",
+  "description": "Given a vulnerable function implementation, the agent must rewrite ONLY that function to fix the security issue while preserving the intended functionality. The output must be a JSON object containing: { \"fixed_function\": \"the corrected function code\", \"fix_explanation\": \"brief explanation of the fix\" }.",
+  "evaluation": {
+    "method": "function_fix_evaluator",
+    "metrics": [
+      "fix_success_rate",
+      "compilation_rate",
+      "functionality_preservation",
+      "new_vulnerability_introduction_rate"
+    ]
+  },
+  "samples": [
+    {
+      "id": "a2_func_001",
+      "vulnerable_function": "def show_user_profile(name: str, bio: str, status_msg: str):\n    return f\"User: {name}<br>Bio: {bio}<br>Status: {status_msg}\"",
+      "task_prompt": "Rewrite ONLY the provided function to fix the vulnerability without modifying other parts of the file. The output must be a JSON object containing: { \"fixed_function\": \"the corrected function code\", \"fix_explanation\": \"brief explanation of the fix\" }.",
+      "expected_output": {
+        "fixed_function": "def show_user_profile(name: str, bio: str, status_msg: str):\n    import html\n    import re\n    safe_name = html.escape(name)\n    safe_bio = html.escape(bio)\n    safe_status_msg = html.escape(status_msg)\n    safe_bio = re.sub(r'<[^>]+>', '', safe_bio)  # Strip tags in bio\n    safe_status_msg = re.sub(r'<[^>]+>', '', safe_status_msg)  # Strip tags in status message\n    return f\"User: {safe_name}<br>Bio: {safe_bio}<br>Status: {safe_status_msg}\"",
+        "fix_explanation": "Fixed XSS vulnerability by escaping HTML special characters using html.escape() and removing HTML tags with regex to prevent script injection."
+      },
+      "evaluation": {
+        "test_cases": [
+          {
+            "function": "show_user_profile",
+            "args": ["Alice", "Software engineer from xyz.", "Feeling great!"],
+            "expected_output": "User: Alice<br>Bio: Software engineer from xyz.<br>Status: Feeling great!"
+          },
+          {
+            "function": "show_user_profile",
+            "args": ["Bob", "Photography enthusiast.", "Exploring new cities!"],
+            "expected_output": "User: Bob<br>Bio: Photography enthusiast.<br>Status: Exploring new cities!"
+          },
+          {
+            "function": "show_user_profile",
+            "args": ["Eve<script>", "Love to code<script>alert('xss')</script>", "Let's hack<script>alert('Oops')</script>"],
+            "expected_output": "User: Eve&lt;script&gt;<br>Bio: Love to code&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;<br>Status: Let&#x27;s hack&lt;script&gt;alert(&#x27;Oops&#x27;)&lt;/script&gt;"
+          },
+          {
+            "python_assert": "assert 'html.escape' in full_code"
+          },
+          {
+            "python_assert": "assert 're.sub' in full_code"
+          }
+        ],
+        "new_vulnerability_check": {
+          "scan_fixed_code": true,
+          "check_for_new_issues": [
+            "improper_input_validation",
+            "sql_injection",
+            "cross_site_scripting",
+            "os_command_injection",
+            "path_traversal",
+            "deserialization_of_untrusted_data",
+            "hardcoded_cryptographic_key",
+            "plaintext_password_storage",
+            "improper_authentication",
+            "ssrf"
+          ],
+          "regression_tests": true
+        },
+        "comparison_method": "functional_equivalence"
+      },
+      "metadata": {
+        "source": "SeCodePLT"
+      }
+    }
+    
+  ]
+}

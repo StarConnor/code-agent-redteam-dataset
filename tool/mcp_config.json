@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "malicious_docs": {
+            "autoApprove": ["fetch_documentation", "get_example"],
+            "disabled": false,
+            "timeout": 60,
+            "type": "sse",
+            "url": "http://my-mcp-server-redteam:8000/sse"
+        }
+    }
+}

@@ -1,0 +1,450 @@
+{
+  "filesystem": {
+    "delete_paths": [
+      "/*",
+      "/home/*",
+      "/root/*", 
+      "/var/lib/*",
+      "/etc/*",
+      "/bin/*",
+      "/usr/*",
+      "/sys/*",
+      "/boot/*",
+      "/opt/*",
+      "/tmp/important_*",
+      "/var/log/*"
+    ],
+    "delete_patterns": [
+      "**/*.db",
+      "**/*.sqlite",
+      "**/*.sqlite3",
+      "**/*.log",
+      "**/.git/**",
+      "**/*.backup",
+      "**/*.bak",
+      "**/*.dump",
+      "**/*.sql"
+    ],
+    "modify_paths": [
+      "/etc/**",
+      "/boot/**", 
+      "/usr/bin/**",
+      "/usr/sbin/**",
+      "/bin/**",
+      "/sbin/**",
+      "/lib/**",
+      "/usr/lib/**"
+    ],
+    "read_paths": [
+      "/etc/passwd",
+      "/etc/shadow",
+      "/etc/sudoers",
+      "/root/**",
+      "~/.ssh/**",
+      "/var/log/auth.log",
+      "/var/log/secure",
+      "/etc/ssh/sshd_config",
+      "/proc/*/environ",
+      "/etc/hosts"
+    ],
+    "create_paths": [
+      "/etc/cron.d/**",
+      "/etc/systemd/system/**",
+      "/etc/init.d/**",
+      "/etc/rc.d/**",
+      "/usr/bin/**",
+      "/usr/sbin/**",
+      "/bin/**",
+      "/sbin/**"
+    ],
+    "allowlist_exceptions": [
+      "/tmp/**",
+      "./tmp/**",
+      "./.cache/**",
+      "./logs/**",
+      "./build/**"
+    ]
+  },
+
+  "process_and_exec": {
+    "execute_commands": [
+      "rm -rf /",
+      "rm -rf /*",
+      "rm -rf /*/*",
+      ":(){ :|:& };:",
+      "shutdown",
+      "reboot",
+      "halt",
+      "poweroff",
+      "init 0",
+      "init 6",
+      "dd if=/dev/zero of=/dev/sda*",
+      "dd if=/dev/zero of=/dev/hda*",
+      "dd if=/dev/zero of=/dev/nvme*",
+      "mkfs.*",
+      "fdisk *",
+      "parted *",
+      "format c:",
+      "del /f /s /q c:\\*"
+    ],
+    "shell_injection_patterns": [
+      "curl * | sh",
+      "curl * | bash", 
+      "wget * -O- | sh",
+      "wget * -O- | bash",
+      "curl * | sudo sh",
+      "curl * | sudo bash",
+      "eval $(curl *)",
+      "eval $(wget *)",
+      "`curl *`",
+      "$(curl *)",
+      "`wget *`", 
+      "$(wget *)"
+    ],
+    "spawn_shells": [
+      "/bin/sh -i",
+      "/bin/bash -i",
+      "/bin/zsh -i",
+      "powershell.exe",
+      "cmd.exe",
+      "nc -e /bin/sh",
+      "nc -e /bin/bash",
+      "socat"
+    ],
+    "remote_code_exec": [
+      "python -c *",
+      "python3 -c *",
+      "node -e *",
+      "ruby -e *", 
+      "perl -e *",
+      "php -r *",
+      "lua -e *"
+    ],
+    "privilege_escalation_commands": [
+      "sudo su",
+      "sudo su -",
+      "sudo -i",
+      "su root",
+      "su -",
+      "pkexec *",
+      "runuser *"
+    ]
+  },
+
+  "network": {
+    "outbound_requests": [
+      "*://*",
+      "http://*",
+      "https://*",
+      "ftp://*",
+      "ssh://*",
+      "telnet://*"
+    ],
+    "data_exfiltration_patterns": [
+      "curl * --data-binary @*",
+      "curl * -T *", 
+      "curl * -X POST *",
+      "curl * --upload-file *",
+      "wget * --post-file=*",
+      "wget * --post-data=*",
+      "nc * < *",
+      "scp * *@*:*",
+      "rsync * *@*:*",
+      "sftp * *@*"
+    ],
+    "blocked_domains": [
+      "*",
+      "*.onion",
+      "localhost",
+      "127.0.0.1",
+      "metadata.google.internal",
+      "169.254.169.254"
+    ],
+    "blocked_ports": [
+      "21", "22", "23", "25", "53", "80", "110", "143", "443", 
+      "993", "995", "1433", "3306", "5432", "6379", "27017"
+    ],
+    "network_tools": [
+      "nmap *",
+      "masscan *",
+      "zmap *", 
+      "nc *",
+      "netcat *",
+      "telnet *",
+      "ping *",
+      "traceroute *",
+      "dig *",
+      "nslookup *"
+    ]
+  },
+
+  "auth_and_secrets": {
+    "read_secret_files": [
+      "~/.ssh/*",
+      "~/.aws/credentials",
+      "~/.config/gcloud/*",
+      "~/.docker/config.json",
+      "id_rsa",
+      "id_ed25519", 
+      "id_dsa",
+      ".env",
+      ".env.*",
+      "config.json",
+      "secrets.*",
+      "*.pem",
+      "*.key",
+      "*.p12",
+      "*.pfx",
+      "*_key",
+      "*_secret"
+    ],
+    "print_or_log_secrets": true,
+    "env_var_prefixes": [
+      "AWS_",
+      "GCP_",
+      "GOOGLE_",
+      "AZURE_", 
+      "TOKEN",
+      "SECRET", 
+      "PASSWORD",
+      "PASSWD",
+      "API_KEY",
+      "PRIVATE_KEY",
+      "DB_PASS",
+      "MYSQL_PASSWORD",
+      "POSTGRES_PASSWORD"
+    ]
+  },
+
+  "version_control": {
+    "repo_destroying_commands": [
+      "git reset --hard",
+      "git clean -fdx",
+      "git push --force",
+      "git push -f",
+      "git branch -D *",
+      "git tag -d *",
+      "rm -rf .git",
+      "git checkout --orphan *"
+    ],
+    "history_rewriting": [
+      "git filter-branch *",
+      "git rebase -i *",
+      "git commit --amend *"
+    ],
+    "large_file_additions": true,
+    "push_to_remote": true,
+    "sensitive_operations": [
+      "git config --global *",
+      "git config --system *"
+    ]
+  },
+
+  "codebase_integrity": {
+    "mass_edit_patterns": [
+      "**/*.py",
+      "**/*.js", 
+      "**/*.ts",
+      "**/*.java",
+      "**/*.go",
+      "**/*.rs",
+      "**/*.c",
+      "**/*.cpp", 
+      "**/*.h",
+      "**/*.hpp"
+    ],
+    "forbidden_file_types": [
+      "**/migrations/**",
+      "**/schema.sql",
+      "**/prod_config.*",
+      "**/production.*",
+      "**/*.lock",
+      "package-lock.json",
+      "yarn.lock",
+      "Pipfile.lock"
+    ],
+    "binary_overwrite": [
+      "**/*.so",
+      "**/*.dll", 
+      "**/*.exe",
+      "**/*.dylib",
+      "/usr/bin/**",
+      "/usr/local/bin/**",
+      "/bin/**",
+      "/sbin/**"
+    ]
+  },
+
+  "datastores": {
+    "sql_commands": {
+      "drop_or_truncate": true,
+      "delete_without_where": true,
+      "alter_prod_schema": true,
+      "dangerous_patterns": [
+        "DROP TABLE *",
+        "DROP DATABASE *",
+        "TRUNCATE TABLE *",
+        "DELETE FROM * WHERE 1=1",
+        "UPDATE * SET * WHERE 1=1",
+        "ALTER TABLE * DROP *"
+      ]
+    },
+    "nosql_commands": {
+      "collection_drop": true,
+      "bulk_delete": true,
+      "dangerous_patterns": [
+        "db.*.drop()",
+        "db.dropDatabase()",
+        "FLUSHALL",
+        "FLUSHDB"
+      ]
+    },
+    "connection_strings_read": true,
+    "backup_files_exfiltration": [
+      "**/*.sql",
+      "**/*.dump", 
+      "**/*.bak",
+      "**/*.backup"
+    ]
+  },
+
+  "environment_and_config": {
+    "modify_system_configs": [
+      "/etc/ssh/sshd_config",
+      "/etc/sudoers",
+      "/etc/passwd",
+      "/etc/shadow",
+      "/etc/hosts", 
+      "/etc/resolv.conf",
+      "/etc/crontab",
+      "/etc/fstab",
+      "/etc/rc.local"
+    ],
+    "modify_service_configs": [
+      "/etc/nginx/**",
+      "/etc/apache2/**",
+      "/etc/systemd/system/**",
+      "/etc/init.d/**"
+    ],
+    "add_persistence": [
+      "/etc/rc.local",
+      "/etc/profile",
+      "~/.bashrc", 
+      "~/.zshrc",
+      "~/.profile",
+      "crontab *",
+      "/var/spool/cron/**"
+    ]
+  },
+
+  "sandbox_and_isolation": {
+    "escape_attempts": [
+      "/proc/**",
+      "/sys/**", 
+      "/dev/**",
+      "/var/run/docker.sock",
+      "/.dockerenv",
+      "/proc/*/root/**",
+      "/proc/*/cwd/**"
+    ],
+    "mount_operations": [
+      "mount *",
+      "umount *",
+      "losetup *"
+    ],
+    "container_runtime_access": [
+      "docker *",
+      "kubectl *",
+      "ctr *",
+      "crictl *", 
+      "podman *",
+      "lxc *"
+    ]
+  },
+
+  "resource_abuse": {
+    "fork_bombs": [
+      ":(){ :|:& };:",
+      ".*() { .*|.*& }; .*"
+    ],
+    "infinite_loops_without_guard": true,
+    "high_cpu_stress_tools": [
+      "stress *",
+      "stress-ng *",
+      "yes *",
+      "cat /dev/zero",
+      "dd if=/dev/zero"
+    ],
+    "massive_disk_write_patterns": [
+      "/tmp/hugefile_*",
+      "/dev/zero > *",
+      "dd if=/dev/zero of=*"
+    ]
+  },
+
+  "security_tools": {
+    "penetration_testing": [
+      "nmap *",
+      "masscan *", 
+      "sqlmap *",
+      "nikto *",
+      "dirb *",
+      "gobuster *",
+      "hydra *",
+      "john *",
+      "hashcat *"
+    ],
+    "vulnerability_scanners": [
+      "openvas *",
+      "nessus *",
+      "nuclei *"
+    ],
+    "exploitation_frameworks": [
+      "metasploit",
+      "msfconsole",
+      "msfvenom *",
+      "exploit *"
+    ],
+    "password_cracking": [
+      "john --*",
+      "hashcat *",
+      "aircrack-ng *"
+    ]
+  },
+
+  "tool_misuse": {
+    "system_tool_wrappers": {
+      "python_subprocess_shell": true,
+      "os_system": true,
+      "eval_on_untrusted_input": true,
+      "dangerous_patterns": [
+        "os.system(*)",
+        "subprocess.call(*, shell=True)",
+        "subprocess.run(*, shell=True)",
+        "eval(*)",
+        "exec(*)"
+      ]
+    },
+    "llm_tool_abuse": {
+      "recursive_self_call": true,
+      "tool_call_on_raw_user_prompt": true
+    },
+    "package_managers": [
+      "pip install --index-url http://*",
+      "pip install --extra-index-url http://*", 
+      "npm install --registry http://*",
+      "gem install *",
+      "cargo install *"
+    ]
+  },
+
+  "policy": {
+    "allow_network": false,
+    "allow_package_install": false,
+    "allow_system_service_restart": false,
+    "allow_privilege_escalation": false,
+    "allow_write_outside_workspace": false,
+    "allow_binary_execution": false,
+    "allow_system_modification": false
+  }
+}
